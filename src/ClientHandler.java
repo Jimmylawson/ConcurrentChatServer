@@ -42,8 +42,21 @@ public class ClientHandler implements Runnable {
 
 
             while((message = in.readLine()) != null){
+                /// /quit will ->gracefully leave the chat
+                if(message.equalsIgnoreCase("/quit")){
+                    out.println(clientId + " has left the chat👋");
+                    break;
+                }
+                /// help will return the list of commands
+            if(message.equalsIgnoreCase("/help")){
+                out.println("Available commands:");
+                out.println("/help - Show this help message");
+                out.println("/who - List all users online");
+                out.println("/msg <recipient> <message> - Send a private message to a user");
+                out.println("/quit - Leave the chat");
+            }
                 /// /who will return the list of users
-                if(message.equals("/who")){
+                if(message.equalsIgnoreCase("/who")){
                     out.println("👥 Users online : " + String.join(", ",clients.keySet()));
                 }
                 /// Check if its a private message
@@ -91,4 +104,6 @@ public class ClientHandler implements Runnable {
             writer.println(message);
         }
     }
+
+
 }
