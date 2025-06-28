@@ -49,13 +49,14 @@ All activities are logged using `java.util.logging`:
 
 ## 🛠️ Commands
 
-| Command                         | Description                                      |
-|----------------------------------|--------------------------------------------------|
-| `/msg <user> <message>`         | Send private message to a user                   |
-| `/who`                          | List all currently online users                 |
-| `/quit`                         | Leave the chat                                   |
-| `/help`                         | Show all available commands                      |
+## 🛠️ Commands
 
+| Command                  | Description                             |
+|--------------------------|-----------------------------------------|
+| `/msg <user> <message>`  | Send private message to a user          |
+| `/who`                   | List all currently online users         |
+| `/quit`                  | Leave the chat                          |
+| `/help`                  | Show all available commands             |
 ---
 
 ## 🧪 How to Run
