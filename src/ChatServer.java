@@ -9,10 +9,30 @@ import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class ChatServer {
-    private static final int port = 5050;
     /// port number
+    private static final int port = 5050;
+
+    static final Logger logger = Logger.getLogger(ChatServer.class.getName());
+
+    static{
+        try {
+            FileHandler fileHandler =  new FileHandler("chat-server.log",true);
+            fileHandler.setFormatter(new SimpleFormatter());
+            logger.addHandler(fileHandler);
+            logger.setLevel(Level.INFO);///INFO or FINE for more details
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
 
     private static ConcurrentHashMap<String, SocketChannel> clients = new ConcurrentHashMap<>();
     private static AtomicInteger clientIdCounter = new AtomicInteger(1);
@@ -87,8 +107,9 @@ public class ChatServer {
                     clientChannel.register(selector, SelectionKey.OP_READ, clientId);
 
                     System.out.println();
+                    logger.info(clientId + " has joined the chat from "+ clientChannel.getRemoteAddress());
                     broadcast(clientId, clientId +Colors.YELLOW.getCode()+  " has joined the chat");
-                    System.out.println();
+
 
                 } else if (key.isReadable()) {
                     /*
@@ -113,6 +134,7 @@ Process chat command or broadcast message
 
                     int bytesRead = -1; /// reading from client
                     try {
+
                         bytesRead = clientChannel.read(buffer); /// reading from client
                     } catch (IOException e) {
                         disconnect(clientChannel, key);
@@ -163,9 +185,11 @@ One client’s channel
     }
 
     static void handleMessage(SocketChannel senderChannel, String senderUsername, String message, SelectionKey key) {
+        logger.info(senderUsername + " says: " + message);
         if (message.startsWith("/msg ")) {
             String[] parts = message.split(" ", 3);
             if (parts.length < 3) {
+
                 send(senderChannel, Colors.RED.getCode() + "\n❌ Usage: /msg <recipient> <message>");
                 return;
             }
@@ -180,6 +204,7 @@ One client’s channel
 
             SocketChannel recipientChannel = clients.get(recipient);
             if (recipientChannel != null) {
+                logger.info("Private message from " + senderUsername + " to " + recipient + ": " + privateMessage);
                 send(recipientChannel, Colors.GREEN.getCode() + "🔒 Private from " + senderUsername + ": " + privateMessage);
                 System.out.println();
                 send(senderChannel, Colors.ORANGE.getCode()+"🔒 Private to " + recipient + ": " + privateMessage);
@@ -228,6 +253,7 @@ One client’s channel
                 }
             }
             if (usernameToRemove != null) {
+                logger.info(usernameToRemove + " has disconnected.");
                 clients.remove(usernameToRemove);
                 System.out.println();
                 broadcast(usernameToRemove, " has left the chat 👋" + Colors.CYAN.getCode());
@@ -237,6 +263,7 @@ One client’s channel
             senderChannel.close();
         } catch (Exception e) {
             {
+                logger.severe("Error reading from client: " + e.getMessage());
                 e.printStackTrace();
             }
         }

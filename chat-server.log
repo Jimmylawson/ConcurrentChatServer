@@ -1,0 +1,40 @@
+Jun 27, 2025 8:11:49 PM ChatServer main
+INFO: User1 has joined the chat from /[0:0:0:0:0:0:0:1]:49395
+Jun 27, 2025 8:11:53 PM ChatServer main
+INFO: User2 has joined the chat from /[0:0:0:0:0:0:0:1]:49398
+Jun 27, 2025 8:11:57 PM ChatServer main
+INFO: User3 has joined the chat from /[0:0:0:0:0:0:0:1]:49399
+Jun 27, 2025 8:12:04 PM ChatServer handleMessage
+INFO: User1 says: Hello Everyone
+Jun 27, 2025 8:12:22 PM ChatServer handleMessage
+INFO: User1 says: /msg User2 I love you
+Jun 27, 2025 8:12:23 PM ChatServer handleMessage
+INFO: Private message from User1 to User2: I love you
+Jun 27, 2025 8:12:32 PM ChatServer handleMessage
+INFO: User2 says: /msg User1 I love you too
+Jun 27, 2025 8:12:32 PM ChatServer handleMessage
+INFO: Private message from User2 to User1: I love you too
+Jun 27, 2025 8:12:47 PM ChatServer handleMessage
+INFO: User3 says: /msg User1 are you home?
+Jun 27, 2025 8:12:47 PM ChatServer handleMessage
+INFO: Private message from User3 to User1: are you home?
+Jun 27, 2025 8:13:00 PM ChatServer handleMessage
+INFO: User1 says: /msg User3 yes i am
+Jun 27, 2025 8:13:00 PM ChatServer handleMessage
+INFO: Private message from User1 to User3: yes i am
+Jun 27, 2025 8:13:17 PM ChatServer handleMessage
+INFO: User3 says: /msg User1 I will come there in a bit
+Jun 27, 2025 8:13:17 PM ChatServer handleMessage
+INFO: Private message from User3 to User1: I will come there in a bit
+Jun 27, 2025 8:15:31 PM ChatServer handleMessage
+INFO: User1 says: /quit
+Jun 27, 2025 8:15:31 PM ChatServer disconnect
+INFO: User1 has disconnected.
+Jun 27, 2025 8:15:37 PM ChatServer handleMessage
+INFO: User3 says: /quit
+Jun 27, 2025 8:15:37 PM ChatServer disconnect
+INFO: User3 has disconnected.
+Jun 27, 2025 8:15:58 PM ChatServer handleMessage
+INFO: User2 says: /quit
+Jun 27, 2025 8:15:58 PM ChatServer disconnect
+INFO: User2 has disconnected.
