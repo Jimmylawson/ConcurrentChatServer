@@ -155,7 +155,6 @@ Process chat command or broadcast message
     }
 
     /*
-    Method
 Role
 Sends to
 broadcast()
@@ -164,6 +163,7 @@ All clients except one
 send()
 Sends message to one user only
 One client’s channel
+    Method
 
      */
     private static void broadcast(String fromUser, String message) {
@@ -213,6 +213,7 @@ One client’s channel
                 System.out.println();
                 send(senderChannel,  Colors.RED.getCode()+"❌ User '" + recipient + "' not found.");
             }
+            return;///
         }
 
         if (message.equals("/who")) {
@@ -222,11 +223,11 @@ One client’s channel
         }
 
         /// allow user to change their username when they join a chat
-        if(message.equalsIgnoreCase("/nick")){
+        if(message.startsWith("/nick")){
             String[]  parts = message.split(" ", 2);
 
             if(parts.length < 2 || parts[1].isEmpty()){
-                send(senderChannel, Colors.RED.getCode() + "❌ Usage: /nick <newUsername>" + Colors.RESET.getCode())
+                send(senderChannel, Colors.RED.getCode() + "❌ Usage: /nick <newUsername>" + Colors.RESET.getCode());
             }
             String newUsername = parts[1];
             ///checking if the new username already exists

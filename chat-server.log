@@ -38,3 +38,63 @@ Jun 27, 2025 8:15:58 PM ChatServer handleMessage
 INFO: User2 says: /quit
 Jun 27, 2025 8:15:58 PM ChatServer disconnect
 INFO: User2 has disconnected.
+Jun 29, 2025 3:16:26 AM ChatServer main
+INFO: User1 has joined the chat from /[0:0:0:0:0:0:0:1]:59170
+Jun 29, 2025 3:16:30 AM ChatServer handleMessage
+INFO: User1 says: Hello
+Jun 29, 2025 3:16:47 AM ChatServer main
+INFO: User2 has joined the chat from /[0:0:0:0:0:0:0:1]:59178
+Jun 29, 2025 3:16:51 AM ChatServer main
+INFO: User3 has joined the chat from /[0:0:0:0:0:0:0:1]:59179
+Jun 29, 2025 3:17:02 AM ChatServer handleMessage
+INFO: User1 says: /nick Jimmy
+Jun 29, 2025 3:17:09 AM ChatServer handleMessage
+INFO: User1 says: Hi
+Jun 29, 2025 3:17:37 AM ChatServer handleMessage
+INFO: User1 says: I love the Lord
+Jun 29, 2025 2:54:44 PM ChatServer main
+INFO: User1 has joined the chat from /[0:0:0:0:0:0:0:1]:51458
+Jun 29, 2025 2:54:49 PM ChatServer main
+INFO: User2 has joined the chat from /[0:0:0:0:0:0:0:1]:51462
+Jun 29, 2025 2:54:54 PM ChatServer main
+INFO: User3 has joined the chat from /[0:0:0:0:0:0:0:1]:51466
+Jun 29, 2025 2:55:30 PM ChatServer handleMessage
+INFO: User1 says: /nick Jimmy
+Jun 29, 2025 2:59:54 PM ChatServer handleMessage
+INFO: User1 says: Hello
+Jun 29, 2025 3:10:32 PM ChatServer main
+INFO: User1 has joined the chat from /[0:0:0:0:0:0:0:1]:53669
+Jun 29, 2025 3:10:39 PM ChatServer main
+INFO: User2 has joined the chat from /[0:0:0:0:0:0:0:1]:53670
+Jun 29, 2025 3:10:45 PM ChatServer main
+INFO: User3 has joined the chat from /[0:0:0:0:0:0:0:1]:53675
+Jun 29, 2025 3:10:52 PM ChatServer handleMessage
+INFO: User1 says: /nick Jimmy
+Jun 29, 2025 3:10:52 PM ChatServer handleMessage
+INFO: User1 changed their username to Jimmy
+Jun 29, 2025 3:11:56 PM ChatServer handleMessage
+INFO: User3 says: /msg Jimmy what's up?
+Jun 29, 2025 3:11:56 PM ChatServer handleMessage
+INFO: Private message from User3 to Jimmy: what's up?
+Jun 29, 2025 3:12:11 PM ChatServer handleMessage
+INFO: User3 says: Do you want to hang out?
+Jun 29, 2025 3:12:25 PM ChatServer handleMessage
+INFO: User3 says: /who
+Jun 29, 2025 3:27:19 PM ChatServer main
+INFO: User1 has joined the chat from /[0:0:0:0:0:0:0:1]:56124
+Jun 29, 2025 3:27:26 PM ChatServer main
+INFO: User2 has joined the chat from /[0:0:0:0:0:0:0:1]:56129
+Jun 29, 2025 3:27:29 PM ChatServer main
+INFO: User3 has joined the chat from /[0:0:0:0:0:0:0:1]:56131
+Jun 29, 2025 3:27:39 PM ChatServer handleMessage
+INFO: User1 says: /nick Jimmy
+Jun 29, 2025 3:27:39 PM ChatServer handleMessage
+INFO: User1 changed their username to Jimmy
+Jun 29, 2025 3:28:06 PM ChatServer handleMessage
+INFO: User3 says: /msg Jimmy How're you?
+Jun 29, 2025 3:28:06 PM ChatServer handleMessage
+INFO: Private message from User3 to Jimmy: How're you?
+Jun 29, 2025 3:28:49 PM ChatServer handleMessage
+INFO: User1 says: /msg User3 I am doing great!
+Jun 29, 2025 3:28:49 PM ChatServer handleMessage
+INFO: Private message from User1 to User3: I am doing great!
