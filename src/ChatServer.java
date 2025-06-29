@@ -221,6 +221,33 @@ One client’s channel
             send(senderChannel, Colors.BLUE.getCode()+"👥 Users online: " + users);
         }
 
+        /// allow user to change their username when they join a chat
+        if(message.equalsIgnoreCase("/nick")){
+            String[]  parts = message.split(" ", 2);
+
+            if(parts.length < 2 || parts[1].isEmpty()){
+                send(senderChannel, Colors.RED.getCode() + "❌ Usage: /nick <newUsername>" + Colors.RESET.getCode())
+            }
+            String newUsername = parts[1];
+            ///checking if the new username already exists
+            if(clients.containsKey(newUsername)){
+                send(senderChannel,  Colors.RED.getCode() + "❌ Username '" + newUsername + "' is already taken." + Colors.RESET.getCode());
+                return;
+            }
+
+            /// Update clients map
+        clients.remove(senderUsername); ///Remove the old name
+        clients.put(newUsername, senderChannel);
+
+        /// Notify other and the sender
+        broadcast(senderUsername, Colors.YELLOW.getCode() + senderUsername + " is now known as " + newUsername + Colors.RESET.getCode());
+        send(senderChannel, Colors.PURPLE.getCode() + "👤Your username has been changed to " + newUsername + Colors.RESET.getCode());
+
+        /// Log the change
+        logger.info(senderUsername + " changed their username to " + newUsername);
+        }
+
+
         if (message.equals("/quit")) {
             System.out.println();
             send(senderChannel, Colors.RESET.getCode()+"👋 Goodbye!");
