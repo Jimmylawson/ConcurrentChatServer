@@ -121,6 +121,9 @@ public class ChatServer {
                     // We also attach the clientId to the key for later reference
                     clientChannel.register(selector, SelectionKey.OP_READ, clientId);
 
+                    // Create a new ClientSession for this channel
+                    clientSessions.put(clientChannel, new ClientSession(clientId));
+
                     // Add blank line for better console readability
                     System.out.println();
 
@@ -200,17 +203,6 @@ Process chat command or broadcast message
                         String message = StandardCharsets.UTF_8.decode(buffer).toString().trim();
 
 
-                        /// Check if this is a new client
-                    if(!clientSessions.containsKey(clientChannel)){
-                        /// Assigning the maybe the new message
-                        String username = message;
-                        clients.put(username, clientChannel);
-                        var session = new ClientSession(username);
-                        clientSessions.put(clientChannel, session);
-                        logger.info(username + " has joined from " + clientChannel.getRemoteAddress());
-                        broadcast(username, Colors.GREEN.getCode() + "🎉 " + username + " has joined the chat!" + Colors.RESET.getCode());
-                        return; // don't handle this as a regular chat message
-                    }
                         handleMessage(clientChannel, clientId, message, key);
                     }
                 }

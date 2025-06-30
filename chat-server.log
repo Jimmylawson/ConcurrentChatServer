@@ -98,3 +98,57 @@ Jun 29, 2025 3:28:49 PM ChatServer handleMessage
 INFO: User1 says: /msg User3 I am doing great!
 Jun 29, 2025 3:28:49 PM ChatServer handleMessage
 INFO: Private message from User1 to User3: I am doing great!
+Jun 30, 2025 12:36:39 PM ChatServer main
+INFO: User1 has joined the chat from /[0:0:0:0:0:0:0:1]:59565
+Jun 30, 2025 12:36:47 PM ChatServer main
+INFO: User2 has joined the chat from /[0:0:0:0:0:0:0:1]:59572
+Jun 30, 2025 12:36:56 PM ChatServer main
+INFO: User3 has joined the chat from /[0:0:0:0:0:0:0:1]:59577
+Jun 30, 2025 12:37:17 PM ChatServer main
+INFO: /nick Alice has joined from /[0:0:0:0:0:0:0:1]:59565
+Jun 30, 2025 12:37:45 PM ChatServer main
+INFO: User1 has joined the chat from /[0:0:0:0:0:0:0:1]:59602
+Jun 30, 2025 12:37:49 PM ChatServer main
+INFO: User2 has joined the chat from /[0:0:0:0:0:0:0:1]:59603
+Jun 30, 2025 12:37:55 PM ChatServer main
+INFO: User3 has joined the chat from /[0:0:0:0:0:0:0:1]:59606
+Jun 30, 2025 12:38:06 PM ChatServer main
+INFO: /nick Alice has joined from /[0:0:0:0:0:0:0:1]:59602
+Jun 30, 2025 12:38:29 PM ChatServer main
+INFO: User1 has joined the chat from /[0:0:0:0:0:0:0:1]:59630
+Jun 30, 2025 12:38:32 PM ChatServer main
+INFO: User2 has joined the chat from /[0:0:0:0:0:0:0:1]:59632
+Jun 30, 2025 12:38:35 PM ChatServer main
+INFO: User3 has joined the chat from /[0:0:0:0:0:0:0:1]:59633
+Jun 30, 2025 12:39:45 PM ChatServer main
+INFO: /nick Alice has joined from /[0:0:0:0:0:0:0:1]:59630
+Jun 30, 2025 1:00:06 PM ChatServer main
+INFO: User1 has joined the chat from /[0:0:0:0:0:0:0:1]:62119
+Jun 30, 2025 1:00:13 PM ChatServer main
+INFO: User2 has joined the chat from /[0:0:0:0:0:0:0:1]:62122
+Jun 30, 2025 1:00:23 PM ChatServer main
+INFO: /msg User2 how you has joined from /[0:0:0:0:0:0:0:1]:62119
+Jun 30, 2025 1:02:17 PM ChatServer main
+INFO: User1 has joined the chat from /[0:0:0:0:0:0:0:1]:62239
+Jun 30, 2025 1:02:21 PM ChatServer main
+INFO: User2 has joined the chat from /[0:0:0:0:0:0:0:1]:62242
+Jun 30, 2025 1:02:41 PM ChatServer main
+INFO: /msg User2 Hello has joined from /[0:0:0:0:0:0:0:1]:62239
+Jun 30, 2025 1:03:14 PM ChatServer main
+INFO: User1 has joined the chat from /[0:0:0:0:0:0:0:1]:64084
+Jun 30, 2025 1:03:16 PM ChatServer main
+INFO: User2 has joined the chat from /[0:0:0:0:0:0:0:1]:64085
+Jun 30, 2025 1:03:23 PM ChatServer main
+INFO: /msg User2 hello has joined from /[0:0:0:0:0:0:0:1]:64084
+Jun 30, 2025 1:11:48 PM ChatServer main
+INFO: User1 has joined the chat from /[0:0:0:0:0:0:0:1]:64406
+Jun 30, 2025 1:11:51 PM ChatServer main
+INFO: User2 has joined the chat from /[0:0:0:0:0:0:0:1]:64409
+Jun 30, 2025 1:11:58 PM ChatServer handleMessage
+INFO: User1 says: /msg User2 how are you
+Jun 30, 2025 1:11:58 PM ChatServer handleMessage
+INFO: Private message from User1 to User2: how are you
+Jun 30, 2025 1:35:14 PM ChatServer handleMessage
+INFO: User1 says: /nick User1 Jimmy
+Jun 30, 2025 1:35:14 PM ChatServer handleMessage
+INFO: User1 changed their username to User1 Jimmy
