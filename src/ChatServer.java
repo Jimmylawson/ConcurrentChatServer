@@ -83,38 +83,53 @@ public class ChatServer {
          * so we'll be notified when that client sends data.
          */
 
+// Main server loop that continuously processes client connections and messages
         while (true) {
-//           /*
-//           ✅ Summary:
-            //This block:
-//	•	Waits for new connections or messages
-//	•	Accepts new client connections
-//	•	Registers each client for reading
-//	•	Assigns them a username
-//	•	Announces their arrival to the chat
-//
+            // Wait until there's at least one channel ready for I/O operations
+            // Returns 0 if no channels are ready, in which case we continue waiting
+            if (selector.select() == 0) continue;
 
-//           */
-            if (selector.select() == 0) continue; /// block until at least one channel is ready
-            Set<SelectionKey> selectedKeys = selector.selectedKeys(); /// getting selected keys from selector>
+            // Get the set of keys that represent channels ready for operations
+            // These could be new connections or data ready to be read
+            Set<SelectionKey> selectedKeys = selector.selectedKeys();
             var iterator = selectedKeys.iterator();
 
+            // Process each ready channel one by one
             while (iterator.hasNext()) {
                 SelectionKey key = iterator.next();
-                iterator.remove(); ///Remove key to avoid processing the same key twice
+                // Remove the current key from the set to prevent processing it again
+                // This is important because Selector doesn't remove keys automatically
+                iterator.remove();
+
+                // Check if this key represents a new connection request
                 if (key.isAcceptable()) {
-                    /// Accept new client
+                    // Accept the new client connection and get their channel
                     SocketChannel clientChannel = serverChannel.accept();
-                    clientChannel.configureBlocking(false); //Non blocking
-                    String clientId = "User" + clientIdCounter.getAndIncrement();///increment client id
+                    // Configure the client channel to be non-blocking
+                    // This allows us to handle multiple clients without dedicated threads
+                    clientChannel.configureBlocking(false);
+
+                    // Generate a unique temporary ID for the new client
+                    // Format: "User1", "User2", etc.
+                    String clientId = "User" + clientIdCounter.getAndIncrement();
+
+                    // Store the client's channel in our clients map
                     clients.put(clientId, clientChannel);
+
+                    // Register this client channel with the selector for READ operations
+                    // This means we'll be notified when this client sends messages
+                    // We also attach the clientId to the key for later reference
                     clientChannel.register(selector, SelectionKey.OP_READ, clientId);
 
+                    // Add blank line for better console readability
                     System.out.println();
-                    logger.info(clientId + " has joined the chat from "+ clientChannel.getRemoteAddress());
-                    broadcast(clientId, clientId +Colors.YELLOW.getCode()+  " has joined the chat");
 
+                    // Log the new connection with client's address information
+                    logger.info(clientId + " has joined the chat from " + clientChannel.getRemoteAddress());
 
+                    // Announce to all other clients that someone new has joined
+                    // The message is colored yellow for visibility
+                    broadcast(clientId, clientId + Colors.YELLOW.getCode() + " has joined the chat");
                 } else if (key.isReadable()) {
                     /*
                     * Code Part
@@ -204,31 +219,37 @@ Process chat command or broadcast message
 
     }
 
-    /*
-Role
-Sends to
-broadcast()
-Sends message to all except sender
-All clients except one
-send()
-Sends message to one user only
-One client’s channel
-    Method
-
-     */
+    // Method to send a message to all clients except the sender
     private static void broadcast(String fromUser, String message) {
+        // Iterate through all clients in the clients map
+        // clients.entrySet() contains username-channel pairs
         for (var client : clients.entrySet()) {
+            // Skip sending the message back to the original sender
+            // by comparing usernames (stored as the key in the map)
             if (!client.getKey().equals(fromUser)) {
+                // Send the message to each other client
+                // client.getValue() gets the SocketChannel for this client
+                // Format the message as "fromUser: message"
                 send(client.getValue(), fromUser + ": " + message);
             }
         }
     }
 
+    // Method to send a message to a specific client through their socket channel
     private static void send(SocketChannel channel, String s) {
         try {
+            // Create a ByteBuffer containing the message:
+            // 1. Add a newline character to the message for proper line breaks
+            // 2. Convert the string to bytes using UTF-8 encoding
+            // 3. Wrap these bytes in a ByteBuffer for NIO operations
             ByteBuffer buffer = ByteBuffer.wrap((s + "\n").getBytes(StandardCharsets.UTF_8));
+
+            // Write the contents of the buffer to the client's channel
+            // This sends the message over the network to the client
             channel.write(buffer);
         } catch (IOException e) {
+            // If there's an error during sending (e.g., client disconnected),
+            // print the stack trace for debugging purposes
             e.printStackTrace();
         }
     }
@@ -364,29 +385,49 @@ One client’s channel
 
     }
 
+    // Method to handle client disconnection and cleanup
     private static void disconnect(SocketChannel senderChannel, SelectionKey key) {
         try {
+            // Initialize variable to store the username of disconnecting client
             String usernameToRemove = null;
+            
+            // Search through all clients to find the username associated with this channel
+            // We need to search by channel (value) to find the username (key)
             for (var client : clients.entrySet()) {
                 if (client.getValue().equals(senderChannel)) {
                     usernameToRemove = client.getKey();
-                    break;
+                    break;  // Exit loop once we find the matching client
                 }
             }
+
+            // If we found the username of the disconnecting client
             if (usernameToRemove != null) {
+                // Log the disconnection event to server logs
                 logger.info(usernameToRemove + " has disconnected.");
+                
+                // Remove the client from our active clients map
                 clients.remove(usernameToRemove);
+                
+                // Add blank line for console readability
                 System.out.println();
+                
+                // Notify all other clients that this user has left
+                // Message includes a wave emoji and is colored cyan
                 broadcast(usernameToRemove, " has left the chat 👋" + Colors.CYAN.getCode());
             }
 
+            // Cancel the selection key to stop monitoring this channel
             key.cancel();
+            
+            // Close the socket channel to free system resources
             senderChannel.close();
+            
         } catch (Exception e) {
-            {
-                logger.severe("Error reading from client: " + e.getMessage());
-                e.printStackTrace();
-            }
+            // If any error occurs during disconnection process
+            // Log it as a severe error with the error message
+            logger.severe("Error reading from client: " + e.getMessage());
+            // Print the full stack trace for debugging
+            e.printStackTrace();
         }
     }
 
