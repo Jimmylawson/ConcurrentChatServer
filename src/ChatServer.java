@@ -1,3 +1,5 @@
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -6,6 +8,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,6 +39,7 @@ public class ChatServer {
 
     private static ConcurrentHashMap<String, SocketChannel> clients = new ConcurrentHashMap<>();
     private static AtomicInteger clientIdCounter = new AtomicInteger(1);
+    private static final Map<SocketChannel,ClientSession> clientSessions = new ConcurrentHashMap<>();///for file transfer
 
     public static void main(String[] args) throws IOException {
 
@@ -114,7 +118,7 @@ public class ChatServer {
                 } else if (key.isReadable()) {
                     /*
                     * Code Part
-Purpose
+                    Purpose
 key.isReadable()
 Check if client sent something
 clientChannel.read(buffer)
@@ -135,7 +139,40 @@ Process chat command or broadcast message
                     int bytesRead = -1; /// reading from client
                     try {
 
-                        bytesRead = clientChannel.read(buffer); /// reading from client
+                        bytesRead = clientChannel.read(buffer); /// reading from client into buffer
+                    ClientSession clientSession = clientSessions.get(clientChannel); ///Get session associated with this client
+                    if(clientSession != null && clientSession.isSendingFile()){
+                        /// If this client is currently sending a file ..
+                        ByteArrayOutputStream output = clientSession.getFileOutputStream();
+                        output.write(buffer.array(), 0, bytesRead);
+
+
+
+                        // Check if file is fully received
+                        if (output.size() >= clientSession.getFileSize()) {
+                            clientSession.setSendingFile(false);
+
+                            /// Save file to disk
+
+                            try (FileOutputStream fos = new FileOutputStream("received_" + clientSession.getFileName())) {
+                                output.writeTo(fos);
+                                logger.info("📁 File saved to disk as: received_" + clientSession.getFileName());
+                            } catch (IOException e) {
+                                logger.severe("❌ Failed to save file: " + e.getMessage());
+                            }
+
+                            // Forward file to recipient
+                            SocketChannel recipientChannel = clients.get(clientSession.getFileReceipient());
+                            if (recipientChannel != null) {
+                                send(recipientChannel, Colors.ORANGE.getCode() + "📥 You received file '" + clientSession.getFileName() + "' from " + clientSession.getUsername());
+                                recipientChannel.write(ByteBuffer.wrap(output.toByteArray()));
+                            }
+
+                            send(clientChannel, Colors.GREEN.getCode() + "✅ File '" + clientSession.getFileName() + "' sent successfully");
+                        }
+
+                        return; // Skip normal message handling
+                    }
                     } catch (IOException e) {
                         disconnect(clientChannel, key);
                         continue;
@@ -146,6 +183,19 @@ Process chat command or broadcast message
                     } else {
                         buffer.flip();/// flip the buffer from writing to reading
                         String message = StandardCharsets.UTF_8.decode(buffer).toString().trim();
+
+
+                        /// Check if this is a new client
+                    if(!clientSessions.containsKey(clientChannel)){
+                        /// Assigning the maybe the new message
+                        String username = message;
+                        clients.put(username, clientChannel);
+                        var session = new ClientSession(username);
+                        clientSessions.put(clientChannel, session);
+                        logger.info(username + " has joined from " + clientChannel.getRemoteAddress());
+                        broadcast(username, Colors.GREEN.getCode() + "🎉 " + username + " has joined the chat!" + Colors.RESET.getCode());
+                        return; // don't handle this as a regular chat message
+                    }
                         handleMessage(clientChannel, clientId, message, key);
                     }
                 }
@@ -169,7 +219,6 @@ One client’s channel
     private static void broadcast(String fromUser, String message) {
         for (var client : clients.entrySet()) {
             if (!client.getKey().equals(fromUser)) {
-
                 send(client.getValue(), fromUser + ": " + message);
             }
         }
@@ -202,6 +251,7 @@ One client’s channel
                 return;
             }
 
+
             SocketChannel recipientChannel = clients.get(recipient);
             if (recipientChannel != null) {
                 logger.info("Private message from " + senderUsername + " to " + recipient + ": " + privateMessage);
@@ -216,10 +266,47 @@ One client’s channel
             return;///
         }
 
+        if(message.startsWith("/sendfile")){
+            String[] sessionParts = message.split(" ",4);
+            if(sessionParts.length < 4){
+                send(senderChannel, Colors.RED.getCode() + "\n❌ Usage: /sendfile <user> <filename> <filesize>");
+                return;
+
+            }
+
+            String receiver = sessionParts[1];
+            String fileName = sessionParts[2];
+            int fileSize = Integer.parseInt(sessionParts[3]);
+
+            SocketChannel receiverChannel = clients.get(receiver);
+            if(receiverChannel == null){
+                send(senderChannel,Colors.RED.getCode() + "\n❌ User '" + receiver + "' not found.");
+                return;
+            }
+
+            var senderSession  = clientSessions.get(senderChannel);
+            senderSession.setSendingFile(true);
+            senderSession.setFileName(fileName);
+            senderSession.setFileReceipient(receiver);
+            senderSession.setFileOutputStream(new ByteArrayOutputStream());
+            senderSession.setFileSize(fileSize);
+
+            /// Receiver session setup
+        var receiverSession = clientSessions.get(receiverChannel);
+            senderSession.startReceivingFile(fileName,fileSize);
+            send(senderChannel, Colors.GREEN.getCode()+"📤 Ready to send file: " + fileName);
+            send(receiverChannel, Colors.GREEN.getCode()+"📥 " + senderSession.getUsername() + " is sending you a file: " + fileName);
+
+            return;
+        }
+
+
         if (message.equals("/who")) {
             String users = String.join(", ", clients.keySet());
             System.out.println();
             send(senderChannel, Colors.BLUE.getCode()+"👥 Users online: " + users);
+
+            return;
         }
 
         /// allow user to change their username when they join a chat
@@ -246,6 +333,7 @@ One client’s channel
 
         /// Log the change
         logger.info(senderUsername + " changed their username to " + newUsername);
+            return;
         }
 
 
@@ -255,6 +343,8 @@ One client’s channel
             System.out.println();
             disconnect(senderChannel, key); ///Cleanly closes the connection and removes user from maps
             key.cancel(); ///Cancels the selection key to stop tracking this channel
+
+        return;
         }
 
         if (message.equals("/help")) {
@@ -266,9 +356,12 @@ One client’s channel
                     /help - Show this help
                     """ + Colors.CYAN.getCode();
             send(senderChannel, help);
-        } else {
-            broadcast(senderUsername, message);
+            return;
         }
+
+            broadcast(senderUsername, message);
+
+
     }
 
     private static void disconnect(SocketChannel senderChannel, SelectionKey key) {
